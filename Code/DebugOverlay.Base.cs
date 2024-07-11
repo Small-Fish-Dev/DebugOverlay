@@ -21,6 +21,9 @@ public sealed partial class DebugOverlay : GameObjectSystem
 
 	private static void RenderQueue()
 	{
+		var tx = Gizmo.Settings == null ? Transform.Zero : Gizmo.Transform;
+		if ( Gizmo.Settings != null ) Gizmo.Transform = Transform.Zero;
+
 		for ( int i = 0; i < _queue.Count; i++ )
 		{
 			var obj = _queue[i];
@@ -32,13 +35,22 @@ public sealed partial class DebugOverlay : GameObjectSystem
 
 			obj.Callback();
 		}
+
+		if ( Gizmo.Settings != null ) Gizmo.Transform = tx;
 	}
 
 	private static void AddToQueue( Action callback, float time )
 	{
+		// ? XD
+		if ( Gizmo.Draw == null )
+			return;
+
 		if ( time <= 0f )
 		{
+			var tx = Gizmo.Settings == null ? Transform.Zero : Gizmo.Transform;
+			if ( Gizmo.Settings != null ) Gizmo.Transform = Transform.Zero;
 			callback();
+			if ( Gizmo.Settings != null ) Gizmo.Transform = tx;
 			return;
 		}
 

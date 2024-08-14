@@ -141,10 +141,12 @@ public partial class DebugOverlay
         => AddToQueue(() =>
         {
             Gizmo.Draw.Color = color ?? Color.White;
-            var normalDir = direction.Normal * (angle > 180f ? -1f : 1f);
+            var halfAngle = angle / 2f;
+            var normalDir = direction.Normal;
 
-            var baseCenter = origin + normalDir * radius;
-            var baseRadius = radius * MathF.Tan(MathX.DegreeToRadian(angle) / 2f);
+            var baseCenter = origin + normalDir * (radius * MathF.Cos(MathX.DegreeToRadian(halfAngle)));
+            var baseRadius = radius * MathF.Sin(MathX.DegreeToRadian(halfAngle));
+
             var upDirection = Vector3.Cross(normalDir, Vector3.Up).Normal;
             var rightDirection = Vector3.Cross(normalDir, upDirection).Normal;
 
@@ -157,8 +159,6 @@ public partial class DebugOverlay
                 var edgeX = MathF.Cos(edgeAngle) * baseRadius;
                 var edgeY = MathF.Sin(edgeAngle) * baseRadius;
                 var edgePosition = baseCenter + rightDirection * edgeX + upDirection * edgeY;
-
-                var edgeLine = new Line(origin, edgePosition);
 
                 Gizmo.Draw.Line(origin, edgePosition);
 
